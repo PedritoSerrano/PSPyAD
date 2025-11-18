@@ -37,8 +37,8 @@ public class MonumentoController {
     }
 
     @PutMapping("/{id}")
-    public Monumento edit(@RequestBody MonumentoNotFoundException cmd, @PathVariable Long id) {
-        return monumentoService.edit(cmd.id);
+    public Monumento edit(@RequestBody EditMonumentoComand cmd, @PathVariable Long id) {
+        return monumentoService.edit(cmd, id);
     }
 
     @DeleteMapping("/{id}")
