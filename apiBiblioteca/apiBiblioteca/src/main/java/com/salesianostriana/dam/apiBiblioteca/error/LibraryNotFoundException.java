@@ -7,11 +7,11 @@ public class LibraryNotFoundException extends RuntimeException{
     }
 
     public LibraryNotFoundException(Long id){
-        super("No hay monumentos con ese ID: %d" .formatted(id));
+        super("No hay bibliotecas con ese ID: %d" .formatted(id));
     }
 
     public LibraryNotFoundException(){
-        super("No hay monumentos con esos requisitos de búsqueda");
+        super("No hay bibliotecas con esos requisitos de búsqueda");
     }
 
 }
