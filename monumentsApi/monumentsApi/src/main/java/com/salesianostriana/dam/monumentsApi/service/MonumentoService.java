@@ -4,8 +4,10 @@ import com.salesianostriana.dam.monumentsApi.dto.EditMonumentoComand;
 import com.salesianostriana.dam.monumentsApi.error.MonumentoNotFoundException;
 import com.salesianostriana.dam.monumentsApi.model.Monumento;
 import com.salesianostriana.dam.monumentsApi.repository.MonumentoRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class MonumentoService {
 
     private final MonumentoRepository monumentoRepository;
 
-    public List<Monumento> findAll(){
+    public List<Monumento> getAll(){
         List<Monumento> result = monumentoRepository.findAll();
         System.out.println(result);
 
