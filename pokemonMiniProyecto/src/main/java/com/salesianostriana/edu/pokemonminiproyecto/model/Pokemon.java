@@ -1,8 +1,6 @@
 package com.salesianostriana.edu.pokemonminiproyecto.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -14,12 +12,16 @@ import lombok.*;
 public class Pokemon {
 
     @Id
-    @GeneratedValue()
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "pokemon_id", nullable = false)
     private Long id;
 
     private String nombre;
-
+    private int nivel;
+    private Tipo tipo;
     private Evolucion evolucion;
-    
+    private double ps;
+
+
 
 }
