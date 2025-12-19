@@ -16,16 +16,29 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public List<Category> findAll() {
-        return categoryRepository.findAll();
+        if (categoryRepository.findAll().isEmpty()){
+            throw new RuntimeException("La lista de categorías está vacia");
+        }else{
+            return categoryRepository.findAll();
+        }
+
     }
 
     public Optional<Category> findById(Long id) {
-        return categoryRepository.findById(id);
+        if (categoryRepository.findById(id).isEmpty()){
+            throw new RuntimeException("No hay categorías con ese id");
+        }else {
+            return categoryRepository.findById(id);
+        }
     }
 
     @Transactional
     public Category save(Category category) {
-        return categoryRepository.save(category);
+        if (category == null){
+            throw new RuntimeException("No se puede guardar, la categoría está vacía");
+        }else {
+            return categoryRepository.save(category);
+        }
     }
 
     @Transactional
@@ -41,6 +54,10 @@ public class CategoryService {
 
     @Transactional
     public void delete(Long id) {
-        categoryRepository.deleteById(id);
+        if (categoryRepository.findById(id).isEmpty()){
+            throw new RuntimeException("No hay categorías con ese id");
+        }else{
+            categoryRepository.deleteById(id);
+        }
     }
 }

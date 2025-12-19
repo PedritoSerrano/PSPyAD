@@ -22,6 +22,8 @@ public class Lesson {
 
     private Integer duracionMinutos;
 
+    private Integer orderIndex;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course course;

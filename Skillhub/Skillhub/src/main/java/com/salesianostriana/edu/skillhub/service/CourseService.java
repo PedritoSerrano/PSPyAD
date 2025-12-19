@@ -1,9 +1,6 @@
 package com.salesianostriana.edu.skillhub.service;
 
-import com.salesianostriana.edu.skillhub.model.Category;
-import com.salesianostriana.edu.skillhub.model.Course;
-import com.salesianostriana.edu.skillhub.model.Lesson;
-import com.salesianostriana.edu.skillhub.model.User;
+import com.salesianostriana.edu.skillhub.model.*;
 import com.salesianostriana.edu.skillhub.repository.CategoryRepository;
 import com.salesianostriana.edu.skillhub.repository.CourseRepository;
 import com.salesianostriana.edu.skillhub.repository.UserRepository;
@@ -26,6 +23,11 @@ public class CourseService {
     public Course createCourseWithLessons(Course course, Long instructorId, List<Lesson> lessons, List<Long> categoryIds) {
         User instructor = userRepository.findById(instructorId)
                 .orElseThrow(() -> new RuntimeException("Instructor no encontrado"));
+
+        if (courseRepository.existsByInstructorIdAndNombre(instructorId, course.getNombre())) {
+            throw new RuntimeException("Ya existe un curso con ese título para este instructor");
+        }
+
         course.setInstructor(instructor);
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
@@ -36,6 +38,58 @@ public class CourseService {
         if (lessons != null && !lessons.isEmpty()) {
             lessons.forEach(lesson -> lesson.setCourse(course));
             course.setLessons(lessons);
+        }
+
+        return courseRepository.save(course);
+    }
+
+    @Transactional
+    public Course publishCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+
+        if (course.getLessons() == null || course.getLessons().isEmpty()) {
+            throw new RuntimeException("El curso debe tener al menos 1 lección para publicarse");
+        }
+
+        return courseRepository.save(course);
+    }
+
+    @Transactional
+    public Lesson addLesson(Long courseId, Lesson lesson) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+
+        if (lesson.getOrderIndex() != null) {
+            boolean orderExists = course.getLessons().stream()
+                    .anyMatch(l -> l.getOrderIndex() != null && l.getOrderIndex().equals(lesson.getOrderIndex()));
+            if (orderExists) {
+                throw new RuntimeException("Ya existe una lección con ese orderIndex en el curso");
+            }
+        }
+
+        lesson.setCourse(course);
+        course.getLessons().add(lesson);
+        courseRepository.save(course);
+        return lesson;
+    }
+
+    @Transactional
+    public Course reorderLessons(Long courseId, List<Long> lessonIds) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+
+        if (lessonIds.size() != course.getLessons().size()) {
+            throw new RuntimeException("La cantidad de lecciones no coincide");
+        }
+
+        for (int i = 0; i < lessonIds.size(); i++) {
+            Long lessonId = lessonIds.get(i);
+            Lesson lesson = course.getLessons().stream()
+                    .filter(l -> l.getId().equals(lessonId))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Lección no encontrada en el curso"));
+            lesson.setOrderIndex(i + 1);
         }
 
         return courseRepository.save(course);
@@ -61,6 +115,11 @@ public class CourseService {
     public Course update(Long id, Course updatedCourse) {
         return courseRepository.findById(id)
                 .map(course -> {
+                    if (updatedCourse.getNombre() != null &&
+                        !updatedCourse.getNombre().equals(course.getNombre()) &&
+                        courseRepository.existsByInstructorIdAndNombre(course.getInstructor().getId(), updatedCourse.getNombre())) {
+                        throw new RuntimeException("Ya existe un curso con ese título para este instructor");
+                    }
                     course.setNombre(updatedCourse.getNombre());
                     course.setDuracionHoras(updatedCourse.getDuracionHoras());
                     return courseRepository.save(course);
