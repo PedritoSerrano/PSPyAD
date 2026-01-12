@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 @Getter
@@ -39,6 +41,24 @@ public class Uso {
     @ManyToOne
     @JoinColumn(name = "usoUsuario_id")
     private Usuario usuario;
+
+    public double calcularPrecio (LocalDateTime fin) {
+
+        long duracion = ChronoUnit.MINUTES.between(fechaInicio, fin);
+        double precio = 0.0;
+        long calculo = duracion;
+
+        calculo = calculo - 30;
+
+        if (calculo > 60){
+            precio = (calculo - 60) *0.025 + 60 * 0.015;
+        } else {
+            precio = calculo * 0.015;
+        }
+
+        return precio;
+    }
+
 
     @Override
     public final boolean equals(Object o) {
