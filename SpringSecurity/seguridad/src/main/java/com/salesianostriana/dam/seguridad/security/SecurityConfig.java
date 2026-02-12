@@ -1,5 +1,6 @@
 package com.salesianostriana.dam.seguridad.security;
 
+import com.salesianostriana.dam.seguridad.security.jwtAccessToken.JwtAuthenticaionFilter;
 import com.salesianostriana.dam.seguridad.user.User;
 import com.salesianostriana.dam.seguridad.user.UserRepository;
 import jakarta.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 
@@ -26,6 +28,7 @@ public class SecurityConfig {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticaionFilter jwtAuthenticationFilter;
 
     @Bean
     SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
@@ -34,12 +37,18 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable()
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .csrf(csrf -> csrf.disable()));
+                .csrf(csrf -> csrf.disable())
+                        .exceptionHandling(ex -> ex
+                                .authenticationEntryPoint(jwtAuthEntryPoint)
+                                .accessDeniedHandler(jwtAccessDeniedHandler)
+                        ));
 
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/error").permitAll()
                 .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
                 .anyRequest().authenticated());
+
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

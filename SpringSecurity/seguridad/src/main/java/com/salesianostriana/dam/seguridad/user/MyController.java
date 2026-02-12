@@ -1,5 +1,6 @@
 package com.salesianostriana.dam.seguridad.user;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +15,8 @@ public class MyController {
     }
 
     @GetMapping("/user")
-    public String endpoint() {
-        return "¡Hola, mundo!";
+    public String endpoint(@AuthenticationPrincipal User user) {
+        return "¡Hello %s!".formatted(user.getUsername());
     }
 
 //    @PreAuthorize("hasRole('ADMIN')")
