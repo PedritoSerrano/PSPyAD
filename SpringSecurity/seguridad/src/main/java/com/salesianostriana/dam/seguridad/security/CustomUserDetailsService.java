@@ -1,5 +1,6 @@
-package com.salesianostriana.dam.seguridad;
+package com.salesianostriana.dam.seguridad.security;
 
+import com.salesianostriana.dam.seguridad.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

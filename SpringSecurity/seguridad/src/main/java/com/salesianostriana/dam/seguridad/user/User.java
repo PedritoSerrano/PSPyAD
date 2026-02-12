@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.seguridad;
+package com.salesianostriana.dam.seguridad.user;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User implements UserDetails {
+public class User implements UserDetails, CredentialsContainer {
 
     @Id
     @GeneratedValue
@@ -39,6 +40,11 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Set.of(new SimpleGrantedAuthority("ROLE_" + this.role));
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 
     @Override

@@ -1,6 +1,5 @@
-package com.salesianostriana.dam.seguridad;
+package com.salesianostriana.dam.seguridad.user;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,11 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class MyController {
 
     @GetMapping
+    public String api() {
+        return "API pública";
+    }
+
+    @GetMapping("/user")
     public String endpoint() {
         return "¡Hola, mundo!";
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
     public String admin() {
         return "Hello Admin!";

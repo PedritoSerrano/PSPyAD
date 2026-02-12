@@ -1,4 +1,4 @@
-package com.salesianostriana.dam.seguridad;
+package com.salesianostriana.dam.seguridad.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
